@@ -4,7 +4,7 @@ import {
   makeSimpleReduxHook,
   useAppDispatch,
   useAppSelector,
-  makeAppCreateAction,
+  makeActionCreatorFactory,
 } from "../helpers";
 
 /***********************************
@@ -24,24 +24,27 @@ export const initialState: MessageState = {
 };
 
 /***********************************
- * Events (Action Creators)
+ * ActionCreator Factory
  ***********************************/
 
-// with prefix for this file's reducer:
-const createAppAction = makeAppCreateAction("message");
+const messageActionCreator = makeActionCreatorFactory("message");
+
+/***********************************
+ * Action Creators
+ ***********************************/
 
 type SubmittedPayload = { text: string };
-const submitted = createAppAction<SubmittedPayload>("submitted");
+const submitted = messageActionCreator<SubmittedPayload>("submitted");
 export const useSubmitted = makeReduxHook<SubmittedPayload>(submitted);
 
 type FailedPayload = { error: string };
-const failed = createAppAction<FailedPayload>("failed");
+const failed = messageActionCreator<FailedPayload>("failed");
 export const useFailed = makeReduxHook<FailedPayload>(failed);
 
-const started = createAppAction("started");
+const started = messageActionCreator("started");
 export const useStarted = makeSimpleReduxHook(started);
 
-const reset = createAppAction("reset");
+const reset = messageActionCreator("reset");
 export const useReset = makeSimpleReduxHook(reset);
 
 /***********************************
@@ -56,10 +59,8 @@ export const useAsyncSubmission = () => {
   return (/* inputs */) =>
     dispatch(async (/* dispatch, getState */) => {
       started();
-
       // mock async delay
       await new Promise((resolve) => setTimeout(resolve, 800));
-
       // mock 200 or 500 response:
       if (Math.random() > 0.5) {
         submitted({
@@ -87,7 +88,7 @@ export const useMessageLoadingSelector = () =>
   useAppSelector((state) => state.MessageState.loading);
 
 /***********************************
- * Reducers
+ * Reducer
  ***********************************/
 
 // Uses "immer" proxy under the hood to ensure immutable state slices:
