@@ -3,13 +3,14 @@ import {
   ActionCreatorWithoutPayload,
   createAction,
 } from "@reduxjs/toolkit";
+import { useCallback } from "react";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import { AppDispatch, AppState } from ".";
 
 /**
  * Function factory for defining action prefix just once.
  */
-export const makeAppCreateAction = (prefix: string) => <P = void>(
+export const makeActionCreatorFactory = (prefix: string) => <P = void>(
   suffix: string
 ) => createAction<P>(`${prefix.toUpperCase()}/${suffix.toLowerCase()}`);
 
@@ -31,7 +32,7 @@ export function makeReduxHook<P>(
 ) {
   return () => {
     const dispatch = useAppDispatch();
-    return (payload: P) => dispatch(actionCreator(payload));
+    return useCallback((payload: P) => dispatch(actionCreator(payload)), []);
   };
 }
 
@@ -43,8 +44,6 @@ export function makeSimpleReduxHook(
 ) {
   return () => {
     const dispatch = useAppDispatch();
-    return () => {
-      dispatch(actionCreator());
-    };
+    return useCallback(() => dispatch(actionCreator()), []);
   };
 }
