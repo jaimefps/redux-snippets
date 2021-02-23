@@ -1,7 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import {
   makeReduxHook,
-  makeSimpleReduxHook,
   useAppDispatch,
   useAppSelector,
   makeActionCreatorFactory,
@@ -42,10 +41,10 @@ const failed = messageActionCreator<FailedPayload>("failed");
 export const useFailed = makeReduxHook<FailedPayload>(failed);
 
 const started = messageActionCreator("started");
-export const useStarted = makeSimpleReduxHook(started);
+export const useStarted = makeReduxHook(started);
 
 const reset = messageActionCreator("reset");
-export const useReset = makeSimpleReduxHook(reset);
+export const useReset = makeReduxHook(reset);
 
 /***********************************
  * Thunks (Async Action Creators)
